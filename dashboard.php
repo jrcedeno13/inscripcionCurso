@@ -13,7 +13,7 @@ if (!isset($_SESSION['user_id'])) {
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Dashboard</title>
+        <title>Sistema de Inscripciones</title>
 
         <!-- SweetAlert -->
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -67,10 +67,21 @@ if (!isset($_SESSION['user_id'])) {
                     <div class="col-md-8 text-center">
                         <div class="card shadow-lg">
                             <div class="card-body">
-                                <h1 class="display-5">Bienvenido, <?php echo htmlspecialchars($_SESSION['username']); ?>!</h1>
+                                <h1 class="display-5">Bienvenido al Sistema de Inscripciones, <?php echo htmlspecialchars($_SESSION['username']); ?>!</h1>
                                 <p class="lead">¡Has iniciado sesión exitosamente!</p>
+                            </div>
+                            <div class="container mt-5">
+                                <p class="text-center">Seleccione un curso para inscribirse.</p>
+                                <div id="cursos" class="row">
+                                    <!-- Aquí se cargarán los cursos dinámicamente -->
+                                </div>
+                            </div>
+                            <div class="card-body">
                                 <button type="button" class="btn btn-danger mt-3" onclick="confirmarCierre(event)">Cerrar sesión</button>
                             </div>
+
+
+
                         </div>
                     </div>
                 </div>

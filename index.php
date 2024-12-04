@@ -4,9 +4,16 @@
 <body>
     <nav class="navbar navbar-dark bg-dark">
       <div class="container">
-        <a class="navbar-brand" href="index.php">INICIO DE SESIÓN </a>
+        <a class="navbar-brand" href="index.php">SISTEMAS DE INSCRIPCIONES </a>
       </div>
     </nav>
+    <div class="container mt-5">
+        <h1 class="text-center">Bienvenido</h1>
+        <p class="text-center">Ingresa al sistema para poder inscribirte a un curso.</p>
+        <div id="cursos" class="row">
+            <!-- Aquí se cargarán los cursos dinámicamente -->
+        </div>
+    </div>
     <div class="container mt-5">
         <div class="row justify-content-center">
             <div class="col-md-6">
