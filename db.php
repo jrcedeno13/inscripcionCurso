@@ -6,7 +6,7 @@ $conn = mysqli_connect(
   'localhost',
   'root',
   '',
-  'user_auth'
+  'curso_inscripciones'
 );
 /*if(isset($conn)){
   echo 'Base de datos conectada';

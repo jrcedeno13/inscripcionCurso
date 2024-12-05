@@ -1,5 +1,7 @@
 <?php
-session_start();
+include ('db.php');
+include ('cursosDisponibles.php');
+//session_start();
 
 // Verifica si el usuario está autenticado
 if (!isset($_SESSION['user_id'])) {
@@ -34,6 +36,17 @@ if (!isset($_SESSION['user_id'])) {
             }
         </script>
 
+        <script>
+            function confirmarCurso(event) {
+                event.preventDefault(); // Evita el envío del formulario por defecto
+                const confirmacion = confirm("¿Deseas registrarte en el curso?");
+                if (confirmacion) {
+                    // Si el usuario confirma, envía el formulario
+                    document.getElementById("registerCurso").submit();
+                }
+            }
+        </script>
+
     </head>
     <body>
         <!-- Navbar -->
@@ -50,7 +63,7 @@ if (!isset($_SESSION['user_id'])) {
                                 Menú
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
-                                <li><a class="dropdown-item" href="actualizacion.php">Actualizar datos</a></li>
+                                <li><a class="dropdown-item" href="actualizacionUserPsw.php">Actualizar datos de ingreso</a></li>
                                 <li><a class="dropdown-item text-danger" href="#" onclick="confirmarEliminarCuenta()">Eliminar cuenta</a></li>
                                 <li><a class="dropdown-item" href="#" onclick="confirmarCierre(event)">Cerrar sesión</a><li>
                             </ul>
@@ -61,24 +74,74 @@ if (!isset($_SESSION['user_id'])) {
         </nav>
 
         <!-- Contenido -->
-        <form id="logoutForm" action="logout.php" method="POST">
-            <div class="container mt-5">
-                <div class="row justify-content-center">
-                    <div class="col-md-8 text-center">
-                        <div class="card shadow-lg">
-                            <div class="card-body">
-                                <h1 class="display-5">Bienvenido al Sistema de Inscripciones, <?php echo htmlspecialchars($_SESSION['username']); ?>!</h1>
-                                <p class="lead">¡Has iniciado sesión exitosamente!</p>
-                            </div>
-                            <div class="container mt-5">
-                                <p class="text-center">Seleccione un curso para inscribirse.</p>
-                                <div id="cursos" class="row">
-                                    <!-- Aquí se cargarán los cursos dinámicamente -->
-                                </div>
-                            </div>
-                            <div class="card-body">
-                                <button type="button" class="btn btn-danger mt-3" onclick="confirmarCierre(event)">Cerrar sesión</button>
-                            </div>
+        
+        <div class="container mt-5">
+            <div class="row justify-content-center">
+                <div class="col-md-8 text-center">
+                    <div class="card shadow-lg">
+                        <div class="card-body">
+                            <h1 class="display-5">Bienvenido al Sistema de Inscripciones, <?php echo htmlspecialchars($_SESSION['username']); ?>!</h1>
+                            <p class="lead">¡Has iniciado sesión exitosamente!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="container mt-5">
+            <div class="row justify-content-center">
+                <div class="col-md-8 text-center">
+                    <div class="card shadow-lg">
+                        <div class="card-body">
+                            <h1 class="display-5">Selecciona un curso para registrarte.</h1>
+                            
+                           
+
+
+                                <form id="registerCurso" action="procesar_inscripcion.php" method="POST">
+                                    <!-- Selección del curso -->
+                                    <div class="mb-3">
+                                        <label for="curso" class="form-label">Seleccione un Curso:</label>
+                                        <select class="form-select" id="curso" name="curso_id" aria-label="Seleccione un curso" required>
+                                            <option selected disabled>Seleccione un curso</option>
+                                            <?php
+                                            if ($result->num_rows > 0) {
+                                                // Generar las opciones dinámicamente
+                                                while ($row = $result->fetch_assoc()) {
+                                                    echo '<option value="' . $row['curso_id'] . '">'
+                                                        . htmlspecialchars($row['nombre']) . ' 
+                                                        (Descripción: ' . htmlspecialchars($row['descripcion']) . ') - 
+                                                        (Cupos disponibles: ' . htmlspecialchars($row['cupo']) . ')'
+                                                        . '</option>';
+                                                }
+                                            } else {
+                                                echo '<option disabled>No hay cursos disponibles</option>';
+                                            }
+                                            ?>
+                                        </select>
+                                    </div>
+                                    <!-- Botón para enviar el formulario -->
+                                    <div class="card-body">
+                                        <button type="submit" class="btn btn-success mt-3">Tomar curso</button>
+                                        <!-- <button type="button" class="btn btn-success mt-3" onclick="confirmarCurso(event)">Tomar curso</button> -->
+                                    </div>
+                                </form>
+
+                                
+                            
+
+
+                                
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -86,28 +149,57 @@ if (!isset($_SESSION['user_id'])) {
                     </div>
                 </div>
             </div>
-        </form>
+        </div>
 
-<?php
-if (isset($_SESSION['message'])) {
-    echo "
+        <form id="logoutForm" action="logout.php" method="POST">
+            <div class="container mt-5">
+                <div class="row justify-content-center">
+                    <div class="col-md-8 text-center">
+                        <div class="card shadow-lg">
+                            <div class="card-body">
+                                <button type="button" class="btn btn-danger mt-3" onclick="confirmarCierre(event)">Cerrar sesión</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    
     <script>
-        Swal.fire({
-            icon: '{$_SESSION['message_type']}',
-            title: '{$_SESSION['message_title']}',
-            text: '{$_SESSION['message']}',
-            confirmButtonText: 'Aceptar'
+        // Verificar si las contraseñas coinciden
+        const form = document.querySelector('form');
+        const password = document.getElementById('password');
+        const confirmPassword = document.getElementById('confirm_password');
+
+        form.addEventListener('submit', (e) => {
+            if (password.value !== confirmPassword.value) {
+                e.preventDefault(); // Evita el envío del formulario
+                alert('Las contraseñas no coinciden. Por favor inténtalo de nuevo.');
+            }
         });
-    </script>";
-    // Limpiar el mensaje después de mostrarlo
-    unset($_SESSION['message']);
-    unset($_SESSION['message_type']);
-    unset($_SESSION['message_title']);
-}
-?>
+    </script>
+
+    <?php
+        if (isset($_SESSION['message'])) {
+            echo "
+            <script>
+                Swal.fire({
+                    icon: '{$_SESSION['message_type']}',
+                    title: '{$_SESSION['message_title']}',
+                    text: '{$_SESSION['message']}',
+                    confirmButtonText: 'Aceptar'
+                });
+            </script>";
+            // Limpiar el mensaje después de mostrarlo
+            unset($_SESSION['message']);
+            unset($_SESSION['message_type']);
+            unset($_SESSION['message_title']);
+        }
+    ?>
 
 <!-- Formulario de logout oculto -->
 <form id="logoutForm" action="logout.php" method="POST" style="display: none;"></form>
+<form id="registerCurso" action="procesar_inscripcion.php" method="POST" style="display: none;"></form>
 <form id="deleteAccountForm" action="delete_account.php" method="POST" style="display: none;"></form>
 
 <!-- Script para confirmar cierre -->
@@ -147,7 +239,12 @@ if (isset($_SESSION['message'])) {
             });
         }
     </script>
-
+    
+    <?php
+    // Cerrar la conexión
+    $conn->close();
+    ?>
+    
 <!-- Bootstrap JS (opcional para funcionalidad avanzada) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
     </body>
