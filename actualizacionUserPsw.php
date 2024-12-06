@@ -20,10 +20,11 @@ if (!isset($_SESSION['user_id'])) {
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" 
+            rel="stylesheet" 
+            integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" 
+            crossorigin="anonymous">
 </head>
-
 
 <body>
     <!-- Navbar -->
@@ -39,8 +40,7 @@ if (!isset($_SESSION['user_id'])) {
                         <a class="nav-link dropdown-toggle" href="#" id="userMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">Menú</a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
                             <li><a class="dropdown-item" href="dashboard.php">Inicio</a></li>
-                            <li><a class="dropdown-item" href="#" onclick="confirmarCierre(event)">Cerrar sesión</a></li>
-                            
+                            <li><a class="dropdown-item" href="#" onclick="confirmarCierre(event)">Cerrar sesión</a></li>                            
                         </ul>
                     </li>
                 </lu>

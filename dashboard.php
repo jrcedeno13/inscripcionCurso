@@ -8,7 +8,22 @@ if (!isset($_SESSION['user_id'])) {
     header("Location: login.html");
     exit();
 }
+
+// Obtener el ID del usuario logueado
+$user_id = $_SESSION['user_id'];
+
+// Obtener los cursos en los que el usuario está inscrito
+$sql_cursos_usuario = "SELECT c.curso_id, c.nombre, c.descripcion, c.cupo FROM cursos c
+                       JOIN inscritos i ON c.curso_id = i.curso_id
+                       WHERE i.nombre = (SELECT primer_nombre FROM users WHERE id = ?) 
+                       AND i.primer_apellido = (SELECT primer_apellido FROM users WHERE id = ?)";
+$stmt_cursos = $conn->prepare($sql_cursos_usuario);
+$stmt_cursos->bind_param("ii", $user_id, $user_id);
+$stmt_cursos->execute();
+$result_cursos_usuario = $stmt_cursos->get_result();
+
 ?>
+
 <!DOCTYPE html>
 <html lang="es">
 
@@ -63,6 +78,7 @@ if (!isset($_SESSION['user_id'])) {
                                 Menú
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
+                                <li><a class="dropdown-item" href="formulario_Act_Datos.php">Completar perfil</a></li>
                                 <li><a class="dropdown-item" href="actualizacionUserPsw.php">Actualizar datos de ingreso</a></li>
                                 <li><a class="dropdown-item text-danger" href="#" onclick="confirmarEliminarCuenta()">Eliminar cuenta</a></li>
                                 <li><a class="dropdown-item" href="#" onclick="confirmarCierre(event)">Cerrar sesión</a><li>
@@ -128,68 +144,68 @@ if (!isset($_SESSION['user_id'])) {
             </div>
         </div>
 
+        <!-- Mostrar los cursos registrados -->
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8 text-center">
+                <div class="card shadow-lg">
+                    <div class="card-body">
+                        <h3 class="display-6">Tus cursos registrados</h3>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Curso</th>
+                                    <th scope="col">Descripción</th>
+                                    <th scope="col">Cupos disponibles</th>
+                                    <th scope="col">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                                if ($result_cursos_usuario->num_rows > 0) {
+                                    $counter = 1;
+                                    while ($row = $result_cursos_usuario->fetch_assoc()) {
+                                        echo "<tr>
+                                                <th scope='row'>{$counter}</th>
+                                                <td>" . htmlspecialchars($row['nombre']) . "</td>
+                                                <td>" . htmlspecialchars($row['descripcion']) . "</td>
+                                                <td>" . htmlspecialchars($row['cupo']) . "</td>
+                                                <td>
+                                                    <form action='eliminar_inscripcion.php' method='POST'>
+                                                        <input type='hidden' name='curso_id' value='{$row['curso_id']}'>
+                                                        <button type='submit' class='btn btn-danger'>Eliminar</button>
+                                                    </form>
+                                                </td>
+                                            </tr>";
+                                        $counter++;
+                                    }
+                                } else {
+                                    echo "<tr><td colspan='5'>No tienes cursos registrados.</td></tr>";
+                                }
+                                ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <form id="logoutForm" action="logout.php" method="POST">
         <div class="container mt-5">
             <div class="row justify-content-center">
                 <div class="col-md-8 text-center">
                     <div class="card shadow-lg">
                         <div class="card-body">
-                        <h3 class="display-6">Tus cursos.</h3>
-
-                            <table class="table table-striped">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">#</th>
-                                        <th scope="col">First</th>
-                                        <th scope="col">Last</th>
-                                        <th scope="col">Handle</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <th scope="row">1</th>
-                                        <td>Mark</td>
-                                        <td>Otto</td>
-                                        <td>@mdo</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">2</th>
-                                        <td>Jacob</td>
-                                        <td>Thornton</td>
-                                        <td>@fat</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">3</th>
-                                        <td>Larry</td>
-                                        <td>the Bird</td>
-                                        <td>@twitter</td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                            <button type="button" class="btn btn-danger mt-3" onclick="confirmarCierre(event)">Cerrar sesión</button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
-
-
-
-        
-        <form id="logoutForm" action="logout.php" method="POST">
-            <div class="container mt-5">
-                <div class="row justify-content-center">
-                    <div class="col-md-8 text-center">
-                        <div class="card shadow-lg">
-                            <div class="card-body">
-                                <button type="button" class="btn btn-danger mt-3" onclick="confirmarCierre(event)">Cerrar sesión</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </form>
+    </form>
     
-
     <?php
         if (isset($_SESSION['message'])) {
             echo "
@@ -208,31 +224,31 @@ if (!isset($_SESSION['user_id'])) {
         }
     ?>
 
-<!-- Formulario de logout oculto -->
-<form id="logoutForm" action="logout.php" method="POST" style="display: none;"></form>
-<form id="registerCurso" action="procesar_inscripcion.php" method="POST" style="display: none;"></form>
-<form id="deleteAccountForm" action="delete_account.php" method="POST" style="display: none;"></form>
+    <!-- Formulario de logout oculto -->
+    <form id="logoutForm" action="logout.php" method="POST" style="display: none;"></form>
+    <form id="registerCurso" action="procesar_inscripcion.php" method="POST" style="display: none;"></form>
+    <form id="deleteAccountForm" action="delete_account.php" method="POST" style="display: none;"></form>
 
-<!-- Script para confirmar cierre -->
-<script>
-    function confirmarCierre() {
-        Swal.fire({
-            title: '¿Está seguro de que desea cerrar sesión?',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Sí, salir',
-            cancelButtonText: 'Cancelar'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // Envía el formulario de logout
-                document.getElementById("logoutForm").submit();
-            }
-        });
-    }
+    <!-- Script para confirmar cierre -->
+    <script>
+        function confirmarCierre() {
+            Swal.fire({
+                title: '¿Está seguro de que desea cerrar sesión?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, salir',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Envía el formulario de logout
+                    document.getElementById("logoutForm").submit();
+                }
+            });
+        }
 
-// Confirmar eliminación de cuenta
+        // Confirmar eliminación de cuenta
         function confirmarEliminarCuenta() {
             Swal.fire({
                 title: '¿Está seguro de que desea eliminar su cuenta?',
@@ -260,3 +276,9 @@ if (!isset($_SESSION['user_id'])) {
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>
+
+
+
+
+
+

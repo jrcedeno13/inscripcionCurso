@@ -5,14 +5,15 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Sistema de Inscripciones</title>
-
+        
         <!-- SweetAlert -->
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
         <!-- Bootstrap -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
-        
-        
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
         <!-- JavaScript -->
         <script>
             function confirmarCierre(event) {
@@ -41,7 +42,8 @@
                                 Menú
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
-                                <li><a class="dropdown-item" href="actualizacion.php">Actualizar datos</a></li>
+                                <li><a class="dropdown-item" href="dashboard.php">Inicio</a></li>
+                                <li><a class="dropdown-item" href="actualizacionUserPsw.php">Actualizar datos de ingreso</a></li>
                                 <li><a class="dropdown-item text-danger" href="#" onclick="confirmarEliminarCuenta()">Eliminar cuenta</a></li>
                                 <li><a class="dropdown-item" href="#" onclick="confirmarCierre(event)">Cerrar sesión</a><li>
                             </ul>
@@ -51,7 +53,7 @@
             </div>
         </nav>
 
-<form action="actualizacion_Datos.php" method="POST">
+        <form action="actualizacion_Datos.php" method="POST">
             <div class="container mt-5">
                 <div class="row justify-content-center">
                     <div class="col-md-6">
@@ -98,10 +100,29 @@
                             </div>
                             <button type="submit" class="btn btn-success w-100" name="registrase_curso">Guardar datos</button>
                         </form>
-                    
                     </div>
                 </div>
             </div>
         </form>
 
+        <?php
+        if (isset($_SESSION['message'])) {
+            echo "
+            <script>
+                Swal.fire({
+                    icon: '{$_SESSION['message_type']}',
+                    title: '{$_SESSION['message_title']}',
+                    text: '{$_SESSION['message']}',
+                    confirmButtonText: 'Aceptar'
+                });
+            </script>";
+            // Limpiar el mensaje después de mostrarlo
+            unset($_SESSION['message']);
+            unset($_SESSION['message_type']);
+            unset($_SESSION['message_title']);
+        }
+        ?>
+        
         <?php include("includes/footer.php"); ?>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+        

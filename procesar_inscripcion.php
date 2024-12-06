@@ -21,10 +21,12 @@ $usuario = $result->fetch_assoc(); // Obtener los datos de usuario como arreglo
 if ($result->num_rows > 0) {
     // Verificar campos obligatorios
     if (empty($usuario['primer_nombre']) || empty($usuario['primer_apellido']) || empty($usuario['correo'])) {
-        echo "<script>
-            alert('Completa tu perfil antes de inscribirte en un curso.');
-            window.location.href = 'formulario_Act_Datos.php';
-        </script>";
+
+        $_SESSION['message'] = "Completa tu perfil antes de inscribirte en un curso.";
+        $_SESSION['message_type'] = "warning";
+        $_SESSION['message_title'] = "Alerta";
+        header("Location: formulario_Act_Datos.php");
+    
         exit;
     }
 } else {
@@ -48,14 +50,12 @@ if (isset($_POST['curso_id'])) {
 
     // Si el usuario ya está inscrito, mostrar mensaje y evitar la inscripción
     if ($result_check->num_rows > 0) {
-        echo "<script>
-            alert('Ya estás inscrito en este curso.');
-            window.history.back();
-        </script>";
+        $_SESSION['message'] = "Ya estás inscrito en el curso: " . htmlspecialchars($curso['nombre']);
+        $_SESSION['message_type'] = "warning"; 
+        $_SESSION['message_title'] = "Alerta";
+        header("Location: dashboard.php");
         exit;
     }
-
-    // Validar que el curso existe y tiene cupo
 
     // Validar que el curso existe y tiene cupo
     $sql_curso = "SELECT nombre, descripcion, cupo FROM cursos WHERE curso_id = ?";
@@ -91,34 +91,44 @@ if (isset($_POST['curso_id'])) {
                     $stmt_update->bind_param("i", $curso_id);
     
                     if ($stmt_update->execute()) {
-                        echo "<script>
-                            alert('Inscripción exitosa. Te has registrado en el curso: " . htmlspecialchars($curso['nombre']) . "');
-                            window.location.href = 'dashboard.php';
-                        </script>";
+
+                        $_SESSION['message'] = "Inscripción exitosa. Te has registrado en el curso: " . htmlspecialchars($curso['nombre']);
+                        $_SESSION['message_type'] = "success"; 
+                        $_SESSION['message_title'] = "¡Éxito!";
+                        header("Location: dashboard.php");
+
                     } else {
-                        echo "Error al actualizar el cupo: " . $conn->error;
+
+                        $_SESSION['message'] = "Hubo un error al registrar tu inscripción. Inténtalo de nuevo más tarde.";
+                        $_SESSION['message_type'] = "error";
+                        $_SESSION['message_title'] = "Error";
+                        header("Location: dashboard.php");
+                        
                     }
-                } else {
-                    echo "Error al registrar la inscripción: " . $stmt_inscripcion->error;
                 }
             } else {
-                echo "<script>
-                    alert('No hay cupos disponibles para este curso.');
-                    window.history.back();
-                </script>";
+
+                $_SESSION['message'] = "No hay cupos disponibles para este curso. Inténtalo de nuevo más tarde.";
+                $_SESSION['message_type'] = "error";
+                $_SESSION['message_title'] = "Error";
+                header("Location: dashboard.php");
+                
             }
         } else {
-            echo "<script>
-                alert('Curso no encontrado.');
-                window.history.back();
-            </script>";
+            $_SESSION['message'] = "Curso no encontrado.";
+            $_SESSION['message_type'] = "error";
+            $_SESSION['message_title'] = "Error";
+            header("Location: dashboard.php");
+        
         }
     } else {
-        echo "<script>
-            alert('No se recibió un curso válido.');
-            window.history.back();
-        </script>";
+        $_SESSION['message'] = "No se recibió un curso válido.";
+        $_SESSION['message_type'] = "error";
+        $_SESSION['message_title'] = "Error";
+        header("Location: dashboard.php");
+        
     }
     
-
 ?>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
