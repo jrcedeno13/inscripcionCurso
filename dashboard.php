@@ -80,7 +80,7 @@ if (!isset($_SESSION['user_id'])) {
                 <div class="col-md-8 text-center">
                     <div class="card shadow-lg">
                         <div class="card-body">
-                            <h1 class="display-5">Bienvenido al Sistema de Inscripciones, <?php echo htmlspecialchars($_SESSION['username']); ?>!</h1>
+                            <h1 class="display-4">Bienvenido al Sistema de Inscripciones, <?php echo htmlspecialchars($_SESSION['username']); ?>!</h1>
                             <p class="lead">¡Has iniciado sesión exitosamente!</p>
                         </div>
                     </div>
@@ -93,7 +93,7 @@ if (!isset($_SESSION['user_id'])) {
                 <div class="col-md-8 text-center">
                     <div class="card shadow-lg">
                         <div class="card-body">
-                            <h1 class="display-5">Selecciona un curso para registrarte.</h1>  
+                            <h3 class="display-5">Registro de curso.</h3>  
                             <form id="registerCurso" action="procesar_inscripcion.php" method="POST">
                                 <!-- Selección del curso -->
                                 <div class="mb-3">
@@ -128,6 +128,53 @@ if (!isset($_SESSION['user_id'])) {
             </div>
         </div>
 
+        <div class="container mt-5">
+            <div class="row justify-content-center">
+                <div class="col-md-8 text-center">
+                    <div class="card shadow-lg">
+                        <div class="card-body">
+                        <h3 class="display-6">Tus cursos.</h3>
+
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">First</th>
+                                        <th scope="col">Last</th>
+                                        <th scope="col">Handle</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <th scope="row">1</th>
+                                        <td>Mark</td>
+                                        <td>Otto</td>
+                                        <td>@mdo</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">2</th>
+                                        <td>Jacob</td>
+                                        <td>Thornton</td>
+                                        <td>@fat</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">3</th>
+                                        <td>Larry</td>
+                                        <td>the Bird</td>
+                                        <td>@twitter</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+        
         <form id="logoutForm" action="logout.php" method="POST">
             <div class="container mt-5">
                 <div class="row justify-content-center">
@@ -142,19 +189,6 @@ if (!isset($_SESSION['user_id'])) {
             </div>
         </form>
     
-    <!-- <script>
-        // Verificar si las contraseñas coinciden
-        const form = document.querySelector('form');
-        const password = document.getElementById('password');
-        const confirmPassword = document.getElementById('confirm_password');
-
-        form.addEventListener('submit', (e) => {
-            if (password.value !== confirmPassword.value) {
-                e.preventDefault(); // Evita el envío del formulario
-                alert('Las contraseñas no coinciden. Por favor inténtalo de nuevo.');
-            }
-        });
-    </script> -->
 
     <?php
         if (isset($_SESSION['message'])) {
