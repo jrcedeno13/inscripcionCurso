@@ -93,58 +93,35 @@ if (!isset($_SESSION['user_id'])) {
                 <div class="col-md-8 text-center">
                     <div class="card shadow-lg">
                         <div class="card-body">
-                            <h1 class="display-5">Selecciona un curso para registrarte.</h1>
-                            
-                           
-
-
-                                <form id="registerCurso" action="procesar_inscripcion.php" method="POST">
-                                    <!-- Selección del curso -->
-                                    <div class="mb-3">
-                                        <label for="curso" class="form-label">Seleccione un Curso:</label>
-                                        <select class="form-select" id="curso" name="curso_id" aria-label="Seleccione un curso" required>
-                                            <option selected disabled>Seleccione un curso</option>
-                                            <?php
-                                            if ($result->num_rows > 0) {
-                                                // Generar las opciones dinámicamente
-                                                while ($row = $result->fetch_assoc()) {
-                                                    echo '<option value="' . $row['curso_id'] . '">'
-                                                        . htmlspecialchars($row['nombre']) . ' 
-                                                        (Descripción: ' . htmlspecialchars($row['descripcion']) . ') - 
-                                                        (Cupos disponibles: ' . htmlspecialchars($row['cupo']) . ')'
-                                                        . '</option>';
-                                                }
-                                            } else {
-                                                echo '<option disabled>No hay cursos disponibles</option>';
+                            <h1 class="display-5">Selecciona un curso para registrarte.</h1>  
+                            <form id="registerCurso" action="procesar_inscripcion.php" method="POST">
+                                <!-- Selección del curso -->
+                                <div class="mb-3">
+                                    <label for="curso" class="form-label">Seleccione un Curso:</label>
+                                    <select class="form-select" id="curso" name="curso_id" aria-label="Seleccione un curso" required>
+                                        <option selected disabled>Seleccione un curso</option>
+                                        <?php
+                                        if ($result->num_rows > 0) {
+                                            // Generar las opciones dinámicamente
+                                            while ($row = $result->fetch_assoc()) {
+                                                echo '<option value="' . $row['curso_id'] . '">'
+                                                    . htmlspecialchars($row['nombre']) . ' 
+                                                    (Descripción: ' . htmlspecialchars($row['descripcion']) . ') - 
+                                                    (Cupos disponibles: ' . htmlspecialchars($row['cupo']) . ')'
+                                                    . '</option>';
                                             }
-                                            ?>
-                                        </select>
-                                    </div>
-                                    <!-- Botón para enviar el formulario -->
-                                    <div class="card-body">
-                                        <button type="submit" class="btn btn-success mt-3">Tomar curso</button>
-                                        <!-- <button type="button" class="btn btn-success mt-3" onclick="confirmarCurso(event)">Tomar curso</button> -->
-                                    </div>
-                                </form>
-
-                                
-                            
-
-
-                                
-
-
-
-
-
-
-
-
-
-
-
-
-
+                                        } else {
+                                            echo '<option disabled>No hay cursos disponibles</option>';
+                                        }
+                                        ?>
+                                    </select>
+                                </div>
+                                <!-- Botón para enviar el formulario -->
+                                <div class="card-body">
+                                    <button type="submit" class="btn btn-success mt-3">Tomar curso</button>
+                                    <!-- <button type="button" class="btn btn-success mt-3" onclick="confirmarCurso(event)">Tomar curso</button> -->
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -165,7 +142,7 @@ if (!isset($_SESSION['user_id'])) {
             </div>
         </form>
     
-    <script>
+    <!-- <script>
         // Verificar si las contraseñas coinciden
         const form = document.querySelector('form');
         const password = document.getElementById('password');
@@ -177,7 +154,7 @@ if (!isset($_SESSION['user_id'])) {
                 alert('Las contraseñas no coinciden. Por favor inténtalo de nuevo.');
             }
         });
-    </script>
+    </script> -->
 
     <?php
         if (isset($_SESSION['message'])) {
